@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 bat 'npm install'
-                bat "podman build -t poc-app:latest ."
+                powershell 'podman build -t poc-app:latest .'
             }
         }
         stage('Test') {
