@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/farahlolah/lightweight-devops-poc.git'
+                git branch: 'main', url: 'https://github.com/farahlolah/lightweight-devops-poc.git'
             }
         }
         stage('Build') {
