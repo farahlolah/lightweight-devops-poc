@@ -1,39 +1,23 @@
 const express = require('express');
 const client = require('prom-client');
-
 const app = express();
 const port = 3001;
-
-// Enable Prometheus metrics collection
 const collectDefaultMetrics = client.collectDefaultMetrics;
-collectDefaultMetrics({ timeout: 5000 });
-
-// Custom metric: HTTP request counter
+collectDefaultMetrics();
 const httpRequestsTotal = new client.Counter({
   name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'route', 'status']
+  help: 'Total HTTP requests',
+  labelNames: ['method', 'route']
 });
-
-// Middleware to count requests
 app.use((req, res, next) => {
   res.on('finish', () => {
-    httpRequestsTotal.inc({ method: req.method, route: req.route ? req.route.path : req.path, status: res.statusCode });
+    httpRequestsTotal.inc({ method: req.method, route: req.route.path || req.path });
   });
   next();
 });
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.send('Hello World from Lightweight DevOps PoC!');
-});
-
-// Metrics endpoint
+app.get('/', (req, res) => res.send('Hello World from Lightweight DevOps PoC!'));
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', client.register.contentType);
   res.end(await client.register.metrics());
 });
-
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
+app.listen(port, () => console.log(`App listening on port ${port}`));
