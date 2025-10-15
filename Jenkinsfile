@@ -8,8 +8,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                bat 'npm install'
-                bat 'podman build -t poc-app:latest .'
+                sh "podman build -t poc-app:latest ."
             }
         }
         stage('Test') {
