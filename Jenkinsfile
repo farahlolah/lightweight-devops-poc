@@ -9,15 +9,15 @@ pipeline {
         stage('Build') {
             steps {
                 bat 'npm install'
-                powershell 'podman build -t poc-app:latest .'
+                powershell 'podman run -d -p 3002:3001 localhost/poc-app:latest'
             }
         }
         stage('Test') {
             steps {
-                bat 'podman run --rm -d -p 3001:3001 poc-app:latest'
+                bat 'podman run --rm -d -p 3002:3001 poc-app:latest'
                 bat 'timeout /t 5'
-                bat 'curl -f http://localhost:3001'
-                bat 'curl -f http://localhost:3001/metrics'
+                bat 'curl -f http://localhost:3002'
+                bat 'curl -f http://localhost:3002/metrics'
                 bat 'podman stop $(podman ps -q)'
             }
         }
